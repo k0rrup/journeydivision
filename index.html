@@ -110,7 +110,7 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
 </head>
 <body>
 <div class="hero-media">
-  <video muted playsinline preload="auto" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
+  <video autoplay muted playsinline loop preload="auto" src="hero-loop.mp4" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
   <video muted playsinline preload="none" class="hv" id="hvB"></video>
   <div class="scrim"></div>
 </div>
@@ -121,7 +121,7 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   var idx=0, front=A, back=B, HOLD=42000, FADE=1300;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function start(v,src,cb){
-    v.src=src; v.loop=true; v.load();
+    v.src=src; v.loop=true; v.muted=true; v.load();
     var done=false;
     v.addEventListener('canplaythrough',function h(){ if(done)return; done=true;
       v.removeEventListener('canplaythrough',h); v.play().then(cb).catch(cb); });
@@ -137,7 +137,10 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
       setTimeout(cycle,HOLD);
     });
   }
-  start(A,SRCS[0],function(){});
+  A.muted=true; A.play().catch(function(){});
+  function rescue(){ if(front.paused && !reduce){ front.muted=true; front.play().catch(function(){}); } }
+  document.addEventListener('touchstart',rescue,{once:false});
+  document.addEventListener('click',rescue,{once:false});
   if(!reduce) setTimeout(cycle,HOLD);
   document.addEventListener('visibilitychange',function(){
     if(document.hidden){A.pause();B.pause();}
