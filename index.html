@@ -129,6 +129,18 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   var idx=0, front=A, back=B, HOLD=42000, FADE=1300, PRE=12000;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // MOBILE RUNS ONE DECODER, FULL STOP.
+  // iOS permits very few simultaneous video decoders. The two-element crossfade needs two, and
+  // preloading the incoming clip 12s early (the desktop freeze fix) was enough to suspend the PLAYING
+  // one on a phone -- the background stopped and iOS fell back to the poster with a play affordance,
+  // which is exactly the reported symptom and a regression I introduced. On mobile we therefore never
+  // load a second element: hvB is dropped entirely and we cycle by swapping src on the single element,
+  // dipping opacity around the swap. If a swap fails to play we stay on what is already running --
+  // a background that keeps moving matters more than three worlds.
+  var ONE = matchMedia('(max-width:820px)').matches ||
+            /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
+  if(ONE && B && B.parentNode){ B.removeAttribute('src'); B.style.display='none'; }
+
   // FREEZE FIX. The old cycler set the incoming src at swap time on an element carrying
   // preload="none", then played it after a blind 4s timeout whether or not it had buffered — so on a
   // slow connection the crossfade landed on a video with no data and sat there as a frozen frame.
@@ -158,6 +170,22 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
     setTimeout(cycle,HOLD);
   }
 
+  // single-element cycle for phones: dip, swap src, play, restore. One decoder the whole time.
+  function cycleOne(){
+    if(document.hidden){ setTimeout(cycleOne,HOLD); return; }
+    var n=(idx+1)%SRCS.length, prev=A.getAttribute('src');
+    A.style.transition='opacity .5s linear'; A.style.opacity='0';
+    setTimeout(function(){
+      A.src=SRCS[n]; A.loop=true; A.muted=true; A.setAttribute('muted','');
+      A.load();
+      var p=A.play();
+      var ok=function(){ idx=n; A.style.opacity='1'; setTimeout(cycleOne,HOLD); };
+      var bad=function(){ A.src=prev; A.load(); A.play().catch(function(){});
+                          A.style.opacity='1'; setTimeout(cycleOne,HOLD); };
+      if(p&&p.then) p.then(ok).catch(bad); else ok();
+    },520);
+  }
+
   function cycle(){
     if(document.hidden){ setTimeout(cycle,HOLD); return; }
     var n=(idx+1)%SRCS.length;
@@ -176,7 +204,10 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   function rescue(){ if(front.paused && !reduce){ front.muted=true; front.play().catch(function(){}); } }
   document.addEventListener('touchstart',rescue,{once:false});
   document.addEventListener('click',rescue,{once:false});
-  if(!reduce){ setTimeout(preloadNext, Math.max(0,HOLD-PRE)); setTimeout(cycle,HOLD); }
+  if(!reduce){
+    if(ONE){ setTimeout(cycleOne,HOLD); }                    // one decoder, no preload
+    else   { setTimeout(preloadNext, Math.max(0,HOLD-PRE)); setTimeout(cycle,HOLD); }
+  }
   document.addEventListener('visibilitychange',function(){
     if(document.hidden){A.pause();B.pause();}
     else if(!reduce){ front.play().catch(function(){}); }
