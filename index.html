@@ -28,10 +28,12 @@ body{
 }
 /* the hero IS a journey — a gated excerpt of an actual master (J8, seamless wrap-close) */
 .hero-media{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
-.hero-media video{
-  width:100%;height:100%;object-fit:cover;
+.hero-media .hv{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   filter:brightness(.72) saturate(1.05);
+  opacity:0;transition:opacity 1.3s linear;
 }
+.hero-media .hv.on{opacity:1}
 .hero-media .scrim{
   position:absolute;inset:0;
   background:
@@ -100,18 +102,38 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
 </head>
 <body>
 <div class="hero-media">
-  <video autoplay muted loop playsinline preload="auto" poster="hero-poster.jpg" id="jv">
-    <source src="hero-loop.mp4" type="video/mp4">
-  </video>
+  <video muted playsinline preload="auto" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
+  <video muted playsinline preload="none" class="hv" id="hvB"></video>
   <div class="scrim"></div>
 </div>
 <script>
 (function(){
-  var v=document.getElementById('jv');
+  var SRCS=['hero-loop.mp4','hero-j3.mp4','hero-j8b.mp4'];
+  var A=document.getElementById('hvA'), B=document.getElementById('hvB');
+  var idx=0, front=A, back=B, HOLD=42000, FADE=1300;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce){ v.removeAttribute('autoplay'); v.pause(); }
+  function start(v,src,cb){
+    v.src=src; v.loop=true; v.load();
+    var done=false;
+    v.addEventListener('canplaythrough',function h(){ if(done)return; done=true;
+      v.removeEventListener('canplaythrough',h); v.play().then(cb).catch(cb); });
+    setTimeout(function(){ if(!done){done=true; v.play().then(cb).catch(cb);} },4000);
+  }
+  function cycle(){
+    if(document.hidden){ setTimeout(cycle,HOLD); return; }
+    idx=(idx+1)%SRCS.length;
+    start(back,SRCS[idx],function(){
+      back.classList.add('on'); front.classList.remove('on');
+      setTimeout(function(){ front.pause(); },FADE);
+      var t=front; front=back; back=t;
+      setTimeout(cycle,HOLD);
+    });
+  }
+  start(A,SRCS[0],function(){});
+  if(!reduce) setTimeout(cycle,HOLD);
   document.addEventListener('visibilitychange',function(){
-    if(document.hidden) v.pause(); else if(!reduce) v.play();
+    if(document.hidden){A.pause();B.pause();}
+    else if(!reduce){ front.play().catch(function(){}); }
   });
 })();
 </script>
