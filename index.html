@@ -168,6 +168,24 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
             /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
   if(ONE && B && B.parentNode){ B.removeAttribute('src'); B.style.display='none'; }
 
+  // MOBILE DECODER BUDGET — restored 8/29 3:20am (@sara-win). The page now carries SEVEN <video>
+  // elements, FIVE autoplaying: hero pair, the brand proof, and the three branded-world tiles.
+  // iOS allows very few simultaneous decoders and a SECOND one was already enough to suspend the
+  // PLAYING hero — the founder reported that dead-background symptom twice tonight. preload="none"
+  // does NOT prevent it, because autoplay starts the load regardless of the preload hint.
+  // So on mobile every NON-hero video shows its poster and starts on tap. Desktop is untouched:
+  // it has the decoders, and that is where the row and the proof actually sell the product.
+  if(ONE){
+    var extra = document.querySelectorAll('.proofv, .worlds video');
+    for (var i = 0; i < extra.length; i++) {
+      var v = extra[i];
+      v.removeAttribute('autoplay');
+      v.preload = 'none';
+      try { v.pause(); } catch(e) {}
+      v.setAttribute('controls', '');     // give the tap something to hit
+    }
+  }
+
   // FREEZE FIX. The old cycler set the incoming src at swap time on an element carrying
   // preload="none", then played it after a blind 4s timeout whether or not it had buffered — so on a
   // slow connection the crossfade landed on a video with no data and sat there as a frozen frame.
