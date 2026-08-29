@@ -12,6 +12,14 @@
 <meta property="og:image" content="https://journeydivision.com/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:video" content="https://journeydivision.com/og-card.mp4">
+<meta property="og:video:secure_url" content="https://journeydivision.com/og-card.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1200">
+<meta property="og:video:height" content="630">
+<meta name="twitter:player" content="https://journeydivision.com/og-card.mp4">
+<meta name="twitter:player:width" content="1200">
+<meta name="twitter:player:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Journey Division">
 <meta name="twitter:description" content="Immersive visual journeys for stages, clubs, and LED walls.">
@@ -111,7 +119,7 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
 <body>
 <div class="hero-media">
   <video autoplay muted playsinline loop preload="auto" src="hero-loop.mp4" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
-  <video muted playsinline preload="none" class="hv" id="hvB"></video>
+  <video muted playsinline loop preload="none" class="hv" id="hvB"></video>
   <div class="scrim"></div>
 </div>
 <script>
@@ -137,7 +145,9 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
       setTimeout(cycle,HOLD);
     });
   }
-  A.muted=true; A.play().catch(function(){});
+  A.muted=true; A.setAttribute('muted','');
+  function kick(){ A.play().catch(function(){}); }
+  kick(); A.addEventListener('loadeddata',kick); A.addEventListener('canplay',kick);
   function rescue(){ if(front.paused && !reduce){ front.muted=true; front.play().catch(function(){}); } }
   document.addEventListener('touchstart',rescue,{once:false});
   document.addEventListener('click',rescue,{once:false});
