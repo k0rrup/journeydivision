@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Studio — Journey Division</title>
+<meta name="description" content="Drop your logo. See it on a real journey in seconds. Buy the pack and get your wall-native loop back the same night.">
+<meta property="og:title" content="The Studio — Journey Division">
+<meta property="og:description" content="Drop your logo. See it on a real journey in seconds.">
+<meta property="og:image" content="https://journeydivision.com/og-card.jpg">
+<meta property="og:url" content="https://journeydivision.com/studio.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2306070c'/%3E%3Cpath d='M14 32h24M30 22l12 10-12 10' stroke='%237df9ff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a; --ink:#e8ecf4; --dim:#8b93a7;
+  --cyan:#7df9ff; --violet:#9a6bff; --ember:#ff9a4d;
+  --line:rgba(125,249,255,.32);
+  --panel:rgba(10,12,20,.62);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  font-weight:300; line-height:1.6; overflow-x:hidden;
+  background-image:
+    radial-gradient(1100px 620px at 78% -8%, rgba(154,107,255,.16), transparent 62%),
+    radial-gradient(900px 520px at 8% 4%, rgba(125,249,255,.10), transparent 60%);
+  background-attachment:fixed;
+}
+a{color:var(--cyan);text-decoration:none}
+main{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---- top bar ---- */
+.bar{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:22px 0 34px;
+}
+.brand{font-family:Unbounded,sans-serif;font-weight:800;font-size:.92rem;letter-spacing:.20em;text-transform:uppercase}
+.brand span{color:var(--cyan)}
+.back{font-size:.84rem;color:var(--dim);letter-spacing:.06em}
+.back:hover{color:var(--cyan)}
+
+/* ---- masthead ---- */
+.kicker{
+  font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--cyan);
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.kicker::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line),transparent)}
+h1{
+  font-family:Unbounded,sans-serif;font-weight:300;
+  font-size:clamp(2.1rem,5.6vw,3.9rem);line-height:1.04;letter-spacing:-.02em;
+  text-wrap:balance;margin-bottom:16px;
+}
+h1 b{font-weight:800;color:var(--cyan)}
+.lede{color:var(--dim);max-width:60ch;font-size:1.03rem}
+
+/* ---- step scaffolding ---- */
+.step{margin:56px 0}
+.step-h{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+.num{
+  font-family:Unbounded,sans-serif;font-weight:800;font-size:.78rem;
+  color:var(--bg);background:var(--cyan);border-radius:999px;
+  width:26px;height:26px;display:grid;place-items:center;flex:none;
+  transform:translateY(3px);
+}
+.step h2{font-family:Unbounded,sans-serif;font-weight:500;font-size:1.18rem;letter-spacing:-.01em}
+.step .hint{color:var(--dim);font-size:.9rem;margin-left:40px;margin-top:-10px;margin-bottom:18px}
+
+/* ---- dropzone ---- */
+.drop{
+  margin-left:40px;border:1.5px dashed var(--line);border-radius:16px;
+  background:var(--panel);padding:38px 28px;text-align:center;cursor:pointer;
+  transition:border-color .18s, background .18s, transform .18s;
+}
+.drop:hover,.drop:focus-visible{border-color:var(--cyan);background:rgba(125,249,255,.05)}
+.drop.hot{border-color:var(--cyan);background:rgba(125,249,255,.09);transform:scale(1.008)}
+.drop.has{border-style:solid;border-color:rgba(125,249,255,.5)}
+.drop-t{font-family:Unbounded,sans-serif;font-weight:500;font-size:1rem;margin-bottom:8px}
+.drop-s{color:var(--dim);font-size:.86rem}
+.drop-s b{color:var(--ink);font-weight:400}
+#file{display:none}
+.chip{
+  display:inline-flex;align-items:center;gap:10px;margin-top:16px;
+  background:rgba(125,249,255,.10);border:1px solid var(--line);
+  border-radius:999px;padding:7px 15px;font-size:.84rem;
+}
+.chip img{height:22px;width:auto;max-width:90px;object-fit:contain}
+.chip button{
+  background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.05rem;
+  line-height:1;padding:0 0 0 4px;
+}
+.chip button:hover{color:var(--ember)}
+.warn{
+  margin:16px 0 0 40px;padding:12px 16px;border-radius:10px;font-size:.86rem;
+  background:rgba(255,154,77,.10);border:1px solid rgba(255,154,77,.34);color:#ffcda3;
+}
+.warn.hide{display:none}
+
+/* ---- template grid ---- */
+.grid{margin-left:40px;display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.card{
+  border:1px solid rgba(125,249,255,.16);border-radius:14px;overflow:hidden;
+  background:var(--panel);cursor:pointer;transition:border-color .18s, transform .18s;
+}
+.card:hover{border-color:var(--line);transform:translateY(-2px)}
+.card.sel{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset}
+.stage{position:relative;aspect-ratio:1920/778;background:#03040a;overflow:hidden}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* fit-box — mirrors drop-logo.sh exactly: height 34%, clamped to width 70%, aspect preserved */
+.mark,.markglow{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  max-height:34%;max-width:70%;width:auto;height:auto;
+  pointer-events:none;opacity:0;transition:opacity .3s;
+}
+.markglow{opacity:0;filter:blur(6px)}
+.stage.on .mark{opacity:1}
+.stage.on .markglow{opacity:.55}
+.wm{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.wm span{
+  position:absolute;color:rgba(255,255,255,.17);font-weight:600;
+  font-size:1.95cqw;letter-spacing:.08em;white-space:nowrap;
+}
+.stage{container-type:inline-size}
+.wm span:nth-child(1){left:12%;top:20%}
+.wm span:nth-child(2){left:55%;top:55%}
+.wm span:nth-child(3){left:25%;top:82%}
+.card-f{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px}
+.card-n{font-family:Unbounded,sans-serif;font-weight:500;font-size:.9rem;letter-spacing:.01em}
+.card-m{color:var(--dim);font-size:.75rem;letter-spacing:.04em}
+.pick{
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border:1px solid rgba(125,249,255,.22);border-radius:999px;padding:4px 11px;flex:none;
+}
+.card.sel .pick{color:var(--bg);background:var(--cyan);border-color:var(--cyan)}
+
+/* ---- packs ---- */
+.packs{margin-left:40px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.pack{
+  border:1px solid rgba(125,249,255,.16);border-radius:14px;background:var(--panel);
+  padding:22px;cursor:pointer;transition:border-color .18s,transform .18s;position:relative;
+}
+.pack:hover{border-color:var(--line);transform:translateY(-2px)}
+.pack.sel{border-color:var(--violet);box-shadow:0 0 0 1px var(--violet) inset}
+.pack-n{font-family:Unbounded,sans-serif;font-weight:500;font-size:1rem;margin-bottom:4px}
+.pack-p{font-family:Unbounded,sans-serif;font-weight:800;font-size:1.75rem;color:var(--cyan);margin:10px 0 14px}
+.pack-p small{font-family:"Space Grotesk",sans-serif;font-weight:300;font-size:.8rem;color:var(--dim)}
+.pack ul{list-style:none;display:grid;gap:8px;font-size:.87rem;color:var(--dim)}
+.pack li{display:flex;gap:9px;align-items:flex-start}
+.pack li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--cyan);flex:none;margin-top:8px}
+.tag{
+  position:absolute;top:-9px;right:16px;background:var(--violet);color:#fff;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 10px;border-radius:999px;
+}
+
+/* ---- checkout ---- */
+.checkout{
+  margin:56px 0 40px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(125,249,255,.07),rgba(154,107,255,.05));
+  padding:30px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;
+}
+.sum-l{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.sum{font-family:Unbounded,sans-serif;font-weight:300;font-size:1.06rem;line-height:1.5}
+.sum b{font-weight:800;color:var(--cyan)}
+.cta{
+  font-family:Unbounded,sans-serif;font-weight:800;font-size:.86rem;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--cyan);color:#04121a;border:none;border-radius:999px;
+  padding:16px 34px;cursor:pointer;transition:transform .16s,box-shadow .16s;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(125,249,255,.26)}
+.cta:disabled{background:rgba(139,147,167,.22);color:var(--dim);cursor:not-allowed;transform:none;box-shadow:none}
+.fine{color:var(--dim);font-size:.78rem;margin-top:12px;width:100%}
+
+/* ---- timeline ---- */
+.tl{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:14px 0 0 40px}
+.tl div{border-left:2px solid rgba(125,249,255,.24);padding-left:16px}
+.tl h3{font-family:Unbounded,sans-serif;font-weight:500;font-size:.9rem;margin-bottom:5px}
+.tl p{color:var(--dim);font-size:.86rem}
+.tl .t{color:var(--cyan);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:7px}
+
+footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0 46px;color:var(--dim);font-size:.82rem}
+@media (max-width:640px){
+  .drop,.grid,.packs,.tl,.step .hint{margin-left:0}
+  .step h2{font-size:1.06rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <div class="brand">Journey <span>Division</span></div>
+    <a class="back" href="/">← back to the journeys</a>
+  </div>
+
+  <div class="kicker">The Studio</div>
+  <h1>Drop your logo.<br>See it on a <b>real journey</b>.</h1>
+  <p class="lede">No mockups and no waiting on a quote. Your mark lands on an actual gated journey loop
+  in your browser, right now — the same fit and glow the finished file uses. Pick the one you want and it
+  renders wall-native tonight.</p>
+
+  <!-- STEP 1 -->
+  <section class="step">
+    <div class="step-h"><div class="num">1</div><h2>Give us your mark</h2></div>
+    <p class="hint">PNG or SVG with a transparent background reads best on a wall. Nothing uploads — the preview happens on your device.</p>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload your logo">
+      <div class="drop-t">Drag your logo here</div>
+      <div class="drop-s">or <b>click to browse</b> · PNG, SVG, WEBP · transparent preferred</div>
+      <div id="chipwrap"></div>
+    </div>
+    <input type="file" id="file" accept="image/png,image/svg+xml,image/webp,image/jpeg">
+    <div class="warn hide" id="warn"></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step">
+    <div class="step-h"><div class="num">2</div><h2>Pick your world</h2></div>
+    <p class="hint">Every template below is a real loop that passed our artifact gate — seamless, 60fps, no pops. Previews are watermarked; your file is not.</p>
+    <div class="grid" id="grid">
+      <div class="card" data-tpl="1" data-name="Hex Bloom">
+        <div class="stage">
+          <video src="tpl-1.mp4" poster="tpl-1.jpg" autoplay muted playsinline loop preload="metadata"></video>
+          <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Hex Bloom journey">
+          <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
+        </div>
+        <div class="card-f"><div><div class="card-n">Hex Bloom</div><div class="card-m">magenta · deep kaleido</div></div><div class="pick">Select</div></div>
+      </div>
+      <div class="card" data-tpl="2" data-name="Prism Corridor">
+        <div class="stage">
+          <video src="tpl-2.mp4" poster="tpl-2.jpg" autoplay muted playsinline loop preload="metadata"></video>
+          <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Prism Corridor journey">
+          <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
+        </div>
+        <div class="card-f"><div><div class="card-n">Prism Corridor</div><div class="card-m">amber · forward rush</div></div><div class="pick">Select</div></div>
+      </div>
+      <div class="card" data-tpl="3" data-name="Kaleido Gate">
+        <div class="stage">
+          <video src="tpl-3.mp4" poster="tpl-3.jpg" autoplay muted playsinline loop preload="metadata"></video>
+          <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Kaleido Gate journey">
+          <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
+        </div>
+        <div class="card-f"><div><div class="card-n">Kaleido Gate</div><div class="card-m">violet · hex tunnel</div></div><div class="pick">Select</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step">
+    <div class="step-h"><div class="num">3</div><h2>Choose your pack</h2></div>
+    <p class="hint">Everything renders at 2664×1080 — the native shape of a club wall — plus a 1080p cut for screens and socials.</p>
+    <div class="packs" id="packs">
+      <div class="pack" data-pack="Single" data-price="149">
+        <div class="pack-n">Single</div>
+        <div class="pack-p">$149 <small>one loop</small></div>
+        <ul><li>One 60-second seamless loop</li><li>2664×1080 wall file + 1080p cut</li><li>60fps, artifact-gated</li><li>Delivered tonight</li></ul>
+      </div>
+      <div class="pack sel" data-pack="Set" data-price="399">
+        <div class="tag">Most booked</div>
+        <div class="pack-n">Set</div>
+        <div class="pack-p">$399 <small>three loops</small></div>
+        <ul><li>Three worlds, one mark</li><li>Wall + 1080p of each</li><li>An 8s name-glitch sting</li><li>Failsafe loop for the booth</li></ul>
+      </div>
+      <div class="pack" data-pack="Residency" data-price="899">
+        <div class="pack-n">Residency</div>
+        <div class="pack-p">$899 <small>full night</small></div>
+        <ul><li>Six worlds, exclusive to you</li><li>No other artist gets them</li><li>Full 60-minute run order</li><li>Revisions until it is right</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT -->
+  <div class="checkout">
+    <div>
+      <div class="sum-l">Your order</div>
+      <div class="sum" id="sum">Pick a world to get started.</div>
+    </div>
+    <button class="cta" id="buy" disabled>Buy now</button>
+    <p class="fine" id="fine">Your logo stays on your device until you order — the preview is rendered locally in your browser.</p>
+  </div>
+
+  <!-- TIMELINE -->
+  <section class="step">
+    <div class="step-h"><div class="num">4</div><h2>What happens next</h2></div>
+    <div class="tl">
+      <div><div class="t">Right now</div><h3>You see it</h3><p>Your mark, fitted and lit on a real journey — no mockup, the actual loop.</p></div>
+      <div><div class="t">On purchase</div><h3>The render starts</h3><p>Your logo goes onto the full-length master at wall resolution, not the preview cut.</p></div>
+      <div><div class="t">Same night</div><h3>Files land</h3><p>Wall file, 1080p cut, and a failsafe loop — emailed to you, ready for the booth.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Journey Division</strong> — immersive visual journeys for stages, clubs and LED walls.<br>
+    Questions before you buy? <a href="mailto:bookings@journeydivision.com">bookings@journeydivision.com</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // Stripe Payment Links, keyed by pack name. Until these are filled in, the CTA falls back to a
+  // pre-filled order email so the flow still completes. Set one per pack and the button goes straight
+  // to card checkout with no other change needed.
+  var PAY_LINKS = { "Single":"", "Set":"", "Residency":"" };
+
+  var drop=document.getElementById('drop'), file=document.getElementById('file'),
+      chipwrap=document.getElementById('chipwrap'), warn=document.getElementById('warn'),
+      grid=document.getElementById('grid'), packs=document.getElementById('packs'),
+      sum=document.getElementById('sum'), buy=document.getElementById('buy'), fine=document.getElementById('fine');
+  var logoURL=null, logoName='', tpl=null, tplName='', pack='Set', price=399;
+
+  /* ---------- logo intake ---------- */
+  function setLogo(f){
+    if(!f) return;
+    if(!/^image\//.test(f.type)){ flag("That file is not an image. PNG or SVG works best."); return; }
+    if(f.size > 25*1024*1024){ flag("That file is over 25 MB — try exporting a smaller PNG."); return; }
+    if(logoURL) URL.revokeObjectURL(logoURL);
+    logoURL = URL.createObjectURL(f); logoName = f.name;
+    document.querySelectorAll('.mark,.markglow').forEach(function(img){ img.src = logoURL; });
+    document.querySelectorAll('.stage').forEach(function(s){ s.classList.add('on'); });
+    drop.classList.add('has');
+    chipwrap.innerHTML='';
+    var chip=document.createElement('div'); chip.className='chip';
+    var im=document.createElement('img'); im.src=logoURL; im.alt='';
+    var tx=document.createElement('span'); tx.textContent = f.name.length>28 ? f.name.slice(0,27)+'…' : f.name;
+    var rm=document.createElement('button'); rm.type='button'; rm.textContent='✕'; rm.title='Remove';
+    rm.addEventListener('click', function(e){ e.stopPropagation(); clearLogo(); });
+    chip.appendChild(im); chip.appendChild(tx); chip.appendChild(rm); chipwrap.appendChild(chip);
+    if(/jpe?g$/i.test(f.name) || f.type==='image/jpeg'){
+      flag("That is a JPEG, so it carries a solid background box. A transparent PNG or SVG will sit on the wall much better — we can also cut the background for you.");
+    } else { warn.classList.add('hide'); }
+    scale();
+  }
+  function clearLogo(){
+    if(logoURL) URL.revokeObjectURL(logoURL);
+    logoURL=null; logoName=''; chipwrap.innerHTML=''; drop.classList.remove('has');
+    document.querySelectorAll('.stage').forEach(function(s){ s.classList.remove('on'); });
+    warn.classList.add('hide'); file.value=''; render();
+  }
+  function flag(m){ warn.textContent=m; warn.classList.remove('hide'); }
+
+  drop.addEventListener('click', function(){ file.click(); });
+  drop.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  file.addEventListener('change', function(){ setLogo(file.files && file.files[0]); });
+  ['dragenter','dragover'].forEach(function(ev){
+    drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('hot'); });
+  });
+  ['dragleave','drop'].forEach(function(ev){
+    drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('hot'); });
+  });
+  drop.addEventListener('drop', function(e){
+    var dt=e.dataTransfer; if(dt && dt.files && dt.files.length) setLogo(dt.files[0]);
+  });
+  window.addEventListener('paste', function(e){
+    var it=e.clipboardData && e.clipboardData.items; if(!it) return;
+    for(var i=0;i<it.length;i++){ if(it[i].type.indexOf('image')===0){ setLogo(it[i].getAsFile()); break; } }
+  });
+
+  /* glow radius tracks the render: gblur sigma 12 at 2664px wide == 0.45% of width */
+  function scale(){
+    document.querySelectorAll('.stage').forEach(function(s){
+      var g=s.querySelector('.markglow'); if(g) g.style.filter='blur('+Math.max(2,s.clientWidth*0.0045)+'px)';
+    });
+  }
+  window.addEventListener('resize', scale);
+
+  /* ---------- selection ---------- */
+  grid.addEventListener('click', function(e){
+    var c=e.target.closest('.card'); if(!c) return;
+    grid.querySelectorAll('.card').forEach(function(x){ x.classList.remove('sel'); x.querySelector('.pick').textContent='Select'; });
+    c.classList.add('sel'); c.querySelector('.pick').textContent='Selected';
+    tpl=c.dataset.tpl; tplName=c.dataset.name; render();
+  });
+  packs.addEventListener('click', function(e){
+    var p=e.target.closest('.pack'); if(!p) return;
+    packs.querySelectorAll('.pack').forEach(function(x){ x.classList.remove('sel'); });
+    p.classList.add('sel'); pack=p.dataset.pack; price=+p.dataset.price; render();
+  });
+
+  function render(){
+    if(!tpl){ sum.textContent='Pick a world to get started.'; buy.disabled=true; buy.textContent='Buy now'; return; }
+    sum.innerHTML='<b>'+pack+'</b> pack on <b>'+tplName+'</b> — <b>$'+price+'</b>'+
+      (logoName? '<br><span style="font-size:.84rem;color:var(--dim)">with '+esc(logoName)+'</span>' : '');
+    buy.disabled=false;
+    buy.textContent = logoURL ? 'Buy now — $'+price : 'Add your logo to continue';
+    if(!logoURL) buy.disabled=true;
+    fine.textContent = PAY_LINKS[pack]
+      ? 'Secure card checkout. Your logo uploads after payment so we can start the render immediately.'
+      : 'Your logo stays on your device until you order — the preview is rendered locally in your browser.';
+  }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+  buy.addEventListener('click', function(){
+    if(!tpl || !logoURL) return;
+    var link = PAY_LINKS[pack];
+    if(link){ window.location.href = link; return; }
+    var subject = 'Journey Division order — '+pack+' pack, '+tplName;
+    var body =
+      'I want to order:\n\n'+
+      '  Pack:     '+pack+' ($'+price+')\n'+
+      '  World:    '+tplName+' (template '+tpl+')\n'+
+      '  Logo:     '+logoName+'  <-- please attach this file to this email\n\n'+
+      'Artist / DJ name:\n'+
+      'Show date:\n'+
+      'Wall size or resolution (if known):\n\n'+
+      '— sent from journeydivision.com/studio';
+    window.location.href='mailto:bookings@journeydivision.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  });
+
+  /* iOS refuses programmatic play; declarative autoplay carries it, this is just a nudge */
+  document.querySelectorAll('.stage video').forEach(function(v){
+    var go=function(){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); };
+    v.addEventListener('loadeddata',go); v.addEventListener('canplay',go); go();
+  });
+
+  scale(); render();
+})();
+</script>
+</body>
+</html>
