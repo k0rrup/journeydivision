@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journey Division — Immersive Visual Journeys</title>
+<meta name="description" content="Journey Division builds immersive visual journeys for stages, clubs, and LED walls. Seamless worlds, true 60fps, built to travel through.">
+<meta property="og:title" content="Journey Division">
+<meta property="og:description" content="Immersive visual journeys for stages, clubs, and LED walls.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://journeydivision.com">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2306070c'/%3E%3Cpath d='M14 32h24M30 22l12 10-12 10' stroke='%237df9ff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a; --ink:#e8ecf4; --dim:#8b93a7;
+  --cyan:#7df9ff; --violet:#9a6bff; --ember:#ff9a4d;
+  --line:rgba(125,249,255,.32);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  font-weight:300; line-height:1.6; overflow-x:hidden;
+}
+/* the hero IS a journey — a gated excerpt of an actual master (J8, seamless wrap-close) */
+.hero-media{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+.hero-media video{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.72) saturate(1.05);
+}
+.hero-media .scrim{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg, rgba(5,6,10,.92), rgba(5,6,10,.55) 52%, rgba(5,6,10,.28)),
+    linear-gradient(180deg, rgba(5,6,10,.35), transparent 30% 70%, rgba(5,6,10,.85));
+}
+section,footer{background:rgba(5,6,10,.82)}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  section,footer{
+    background:rgba(5,6,10,.58);
+    -webkit-backdrop-filter:blur(16px) saturate(1.12);
+    backdrop-filter:blur(16px) saturate(1.12);
+  }
+}
+/* layout */
+main{max-width:1060px;margin:0 auto;padding:0 24px}
+header{min-height:92vh;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.kicker{
+  font-size:12px;letter-spacing:.42em;text-transform:uppercase;color:var(--cyan);
+  display:flex;align-items:center;gap:14px;
+}
+.kicker::before{content:"";width:44px;height:1px;background:var(--cyan);display:inline-block}
+h1{
+  font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(2.6rem,8.2vw,6.4rem);line-height:1.02;letter-spacing:.01em;
+  background:linear-gradient(100deg,#fff 20%,var(--cyan) 55%,var(--violet) 85%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{font-size:clamp(1.05rem,2.2vw,1.4rem);color:var(--dim);max-width:34em}
+.sub b{color:var(--ink);font-weight:400}
+.cta{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.btn{
+  font-family:"Unbounded",sans-serif;font-weight:500;font-size:.82rem;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;padding:15px 30px;border-radius:999px;
+}
+.btn.primary{color:#04060a;background:linear-gradient(100deg,var(--cyan),var(--violet));}
+.btn.ghost{color:var(--ink);border:1px solid rgba(232,236,244,.25)}
+.btn:hover{filter:brightness(1.15)}
+section{padding:88px 0;border-top:1px solid rgba(232,236,244,.07)}
+h2{
+  font-family:"Unbounded",sans-serif;font-weight:500;font-size:.95rem;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--cyan);margin-bottom:44px;
+}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px}
+.card{
+  border:1px solid rgba(232,236,244,.09); border-radius:18px; padding:30px 26px;
+  background:linear-gradient(160deg,rgba(125,249,255,.045),rgba(154,107,255,.035) 60%,transparent);
+}
+.card h3{font-family:"Unbounded",sans-serif;font-weight:500;font-size:1.02rem;margin-bottom:12px}
+.card p{color:var(--dim);font-size:.98rem}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;
+  border:1px solid rgba(232,236,244,.09);border-radius:18px;overflow:hidden}
+.law{background:rgba(232,236,244,.03);padding:26px 24px}
+.law em{display:block;font-style:normal;font-family:"Unbounded",sans-serif;font-weight:500;
+  font-size:.86rem;margin-bottom:8px;color:var(--ink)}
+.law span{color:var(--dim);font-size:.9rem}
+.contact p{font-size:clamp(1.2rem,3vw,1.7rem);max-width:26em;color:var(--ink)}
+.mail{
+  display:inline-block;margin-top:26px;font-family:"Unbounded",sans-serif;font-weight:500;
+  font-size:clamp(1rem,2.6vw,1.5rem);color:var(--cyan);text-decoration:none;
+  border-bottom:1px solid var(--cyan);padding-bottom:4px;
+}
+footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
+  justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(232,236,244,.07)}
+</style>
+</head>
+<body>
+<div class="hero-media">
+  <video autoplay muted loop playsinline preload="auto" poster="hero-poster.jpg" id="jv">
+    <source src="hero-loop.mp4" type="video/mp4">
+  </video>
+  <div class="scrim"></div>
+</div>
+<script>
+(function(){
+  var v=document.getElementById('jv');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ v.removeAttribute('autoplay'); v.pause(); }
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden) v.pause(); else if(!reduce) v.play();
+  });
+})();
+</script>
+<main>
+  <header>
+    <p class="kicker">Visual production studio</p>
+    <h1>JOURNEY<br>DIVISION</h1>
+    <p class="sub">Immersive visual journeys for stages, clubs, and LED walls.
+    <b>Worlds you travel through</b> — slow, seamless, and built for the biggest screen in the room.</p>
+    <div class="cta">
+      <a class="btn primary" href="mailto:bookings@journeydivision.com">Book a journey</a>
+      <a class="btn ghost" href="#work">What we build</a>
+    </div>
+  </header>
+
+  <section id="work">
+    <h2>What we build</h2>
+    <div class="cols">
+      <div class="card"><h3>Bespoke Journeys</h3>
+        <p>Ten-plus-minute set visuals that move through one coherent universe — long dwells,
+        slow dissolves, no hard cuts. Built as seamless loops that never snap back.</p></div>
+      <div class="card"><h3>Venue &amp; DJ Packs</h3>
+        <p>4K masters rendered once, delivered native to your wall — ultra-wide, portrait, or
+        custom. Eight-second branded loops, stingers, and title cards to match.</p></div>
+      <div class="card"><h3>Brand Integration</h3>
+        <p>Your mark, composited clean — fit-box sized for any logo, glow-matched to the world
+        behind it, never baked in until you say it ships.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The standard</h2>
+    <div class="laws">
+      <div class="law"><em>Forward, always</em><span>The camera travels slowly toward the next place. You always know where you are and where you&#8217;re heading.</span></div>
+      <div class="law"><em>One universe</em><span>No scenes that don&#8217;t match. Every world belongs to the same journey.</span></div>
+      <div class="law"><em>True 60fps</em><span>Real frames at 60 — measured, not assumed. Every master is machine-gated for cadence, seams, and artifacts before it ships.</span></div>
+      <div class="law"><em>Wall-safe</em><span>Encodes tuned for LED processors and club playback rigs. No banding, no bitrate spikes, no surprises at 1am.</span></div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <h2>Bookings</h2>
+    <p>Residencies, events, and custom packs. Tell us the room, the screen, and the night —
+    we&#8217;ll build the world.</p>
+    <a class="mail" href="mailto:bookings@journeydivision.com">bookings@journeydivision.com</a>
+  </section>
+
+  <footer>
+    <span>© 2026 Journey Division</span>
+    <span>Built for the wall.</span>
+  </footer>
+</main>
+</body>
+</html>
