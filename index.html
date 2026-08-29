@@ -129,6 +129,18 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   opacity: .55;
 }
 @media (prefers-reduced-motion: reduce) { .proofv { display: none; } }
+
+/* Branded-world row. Three across on desktop, stacked on phones. No card boxes, per the
+   rule this file already follows — the media is the content, nothing frames it. */
+.worlds { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 1.2rem; }
+.worlds figure { margin: 0; }
+.worlds video { display: block; width: 100%; height: auto; border-radius: 2px; background: #000; }
+#branded .lede { max-width: 46ch; opacity: .78; }
+@media (max-width: 720px) { .worlds { grid-template-columns: 1fr; gap: .6rem; } }
+@media (prefers-reduced-motion: reduce) {
+  /* posters still carry the point without motion */
+  .worlds video { pointer-events: none; }
+}
 </style>
 </head>
 <body>
@@ -155,19 +167,6 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   var ONE = matchMedia('(max-width:820px)').matches ||
             /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
   if(ONE && B && B.parentNode){ B.removeAttribute('src'); B.style.display='none'; }
-
-  // @mac's brand-integration proof is a FOURTH video on this page. On desktop that is free; on a
-  // phone every extra decoder competes with the hero, and a second one was enough to kill the
-  // background entirely (founder-reported, fixed above). @mac branched before that fix and could not
-  // have known. So on mobile the proof does not autoplay or preload — it shows its poster and starts
-  // on tap. Desktop keeps it autoplaying, which is what makes the point on the page.
-  if(ONE){
-    document.querySelectorAll('.proofv').forEach(function(v){
-      v.removeAttribute('autoplay'); v.preload='none'; v.pause();
-      v.setAttribute('controls','');            // so a tap has something obvious to hit
-      v.addEventListener('play', function(){ /* hero already holds the single decoder; let it go */ });
-    });
-  }
 
   // FREEZE FIX. The old cycler set the incoming src at swap time on an element carrying
   // preload="none", then played it after a blind 4s timeout whether or not it had buffered — so on a
@@ -281,6 +280,20 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
       <a class="btn ghost" href="#work">What we build</a>
     </div>
   </header>
+
+  <section id="branded">
+    <h2>Your name, inside the world</h2>
+    <p class="lede">The mark does not sit on top of the journey — the journey plays
+    <em>through</em> it. Same three worlds below, carrying a mark.</p>
+    <div class="worlds">
+      <figure><video autoplay muted playsinline loop preload="none"
+        poster="world-1-nk.jpg" src="world-1-nk.mp4"></video></figure>
+      <figure><video autoplay muted playsinline loop preload="none"
+        poster="world-2-nk.jpg" src="world-2-nk.mp4"></video></figure>
+      <figure><video autoplay muted playsinline loop preload="none"
+        poster="world-3-nk.jpg" src="world-3-nk.mp4"></video></figure>
+    </div>
+  </section>
 
   <section id="work">
     <h2>What we build</h2>
