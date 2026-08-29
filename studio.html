@@ -120,6 +120,36 @@ h1 b{font-weight:800;color:var(--cyan)}
 .markglow{opacity:0;filter:blur(6px)}
 .stage.on .mark{opacity:1}
 .stage.on .markglow{opacity:.55}
+/* THROUGH-THE-WORLD treatment. Measured off a real rig in the founder's show footage: the mark does
+   not move, the CONTENT moves through it. A dark scrim covers the stage with the mark KNOCKED OUT of
+   it, so the world plays at full strength inside the letterforms and dimmed outside — one video
+   element, no second decode. This is `mark-mask.sh lift` expressed in CSS, so the browser preview and
+   the renderer agree by construction, exactly as the fit-box does for the overlay treatment. */
+.knock{
+  position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:rgba(3,4,10,.72);
+  -webkit-mask-image:linear-gradient(#000,#000), var(--mk, none);
+  mask-image:linear-gradient(#000,#000), var(--mk, none);
+  -webkit-mask-size:100% 100%, 70% 34%;
+  mask-size:100% 100%, 70% 34%;
+  -webkit-mask-position:center, center;
+  mask-position:center, center;
+  -webkit-mask-repeat:no-repeat, no-repeat;
+  mask-repeat:no-repeat, no-repeat;
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+}
+.stage.on.through .knock{opacity:1}
+.stage.on.through .mark,.stage.on.through .markglow{opacity:0}
+.treat{margin:0 0 18px 40px;display:flex;gap:10px;flex-wrap:wrap}
+.treat button{
+  font-family:"Space Grotesk",sans-serif;font-size:.82rem;letter-spacing:.02em;
+  background:var(--panel);color:var(--dim);border:1px solid rgba(125,249,255,.18);
+  border-radius:999px;padding:9px 17px;cursor:pointer;transition:border-color .18s,color .18s;
+}
+.treat button:hover{border-color:var(--line);color:var(--ink)}
+.treat button.on{border-color:var(--cyan);color:var(--cyan)}
+.treat .why{color:var(--dim);font-size:.78rem;align-self:center;margin-left:4px}
 .wm{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .wm span{
   position:absolute;color:rgba(255,255,255,.17);font-weight:600;
@@ -220,11 +250,17 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
   <section class="step">
     <div class="step-h"><div class="num">2</div><h2>Pick your world</h2></div>
     <p class="hint">Every template below is a real loop that passed our artifact gate — seamless, 60fps, no pops. Previews are watermarked; your file is not.</p>
+    <div class="treat" id="treat">
+      <button type="button" data-t="overlay" class="on">Mark on top</button>
+      <button type="button" data-t="through">Through the world</button>
+      <span class="why">how your mark sits in the visual — both are treatments we measured off working club rigs</span>
+    </div>
     <div class="grid" id="grid">
       <div class="card" data-tpl="1" data-name="Hex Bloom">
         <div class="stage">
           <video src="tpl-1.mp4" poster="tpl-1.jpg" autoplay muted playsinline loop preload="metadata"></video>
           <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Hex Bloom journey">
+          <div class="knock"></div>
           <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
         </div>
         <div class="card-f"><div><div class="card-n">Hex Bloom</div><div class="card-m">magenta · deep kaleido</div></div><div class="pick">Select</div></div>
@@ -233,6 +269,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
         <div class="stage">
           <video src="tpl-2.mp4" poster="tpl-2.jpg" autoplay muted playsinline loop preload="metadata"></video>
           <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Prism Corridor journey">
+          <div class="knock"></div>
           <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
         </div>
         <div class="card-f"><div><div class="card-n">Prism Corridor</div><div class="card-m">amber · forward rush</div></div><div class="pick">Select</div></div>
@@ -241,6 +278,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
         <div class="stage">
           <video src="tpl-3.mp4" poster="tpl-3.jpg" autoplay muted playsinline loop preload="metadata"></video>
           <img class="markglow" alt=""><img class="mark" alt="Your logo previewed on the Kaleido Gate journey">
+          <div class="knock"></div>
           <div class="wm"><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span><span>JOURNEY DIVISION PREVIEW</span></div>
         </div>
         <div class="card-f"><div><div class="card-n">Kaleido Gate</div><div class="card-m">violet · hex tunnel</div></div><div class="pick">Select</div></div>
@@ -310,7 +348,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
       chipwrap=document.getElementById('chipwrap'), warn=document.getElementById('warn'),
       grid=document.getElementById('grid'), packs=document.getElementById('packs'),
       sum=document.getElementById('sum'), buy=document.getElementById('buy'), fine=document.getElementById('fine');
-  var logoURL=null, logoName='', tpl=null, tplName='', pack='Set', price=399;
+  var logoURL=null, logoName='', tpl=null, tplName='', pack='Set', price=399, treat='overlay';
 
   /* ---------- logo intake ---------- */
   function setLogo(f){
@@ -320,7 +358,11 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
     if(logoURL) URL.revokeObjectURL(logoURL);
     logoURL = URL.createObjectURL(f); logoName = f.name;
     document.querySelectorAll('.mark,.markglow').forEach(function(img){ img.src = logoURL; });
-    document.querySelectorAll('.stage').forEach(function(s){ s.classList.add('on'); });
+    // the same object URL drives the CSS knockout mask, so both treatments show the identical artwork
+    document.querySelectorAll('.stage').forEach(function(s){
+      s.classList.add('on');
+      s.style.setProperty('--mk', 'url("' + logoURL + '")');
+    });
     drop.classList.add('has');
     chipwrap.innerHTML='';
     var chip=document.createElement('div'); chip.className='chip';
@@ -378,6 +420,15 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) scale(); });
 
   /* ---------- selection ---------- */
+  var treatEl=document.getElementById('treat');
+  treatEl.addEventListener('click', function(e){
+    var b=e.target.closest('button[data-t]'); if(!b) return;
+    treatEl.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); treat=b.dataset.t;
+    document.querySelectorAll('.stage').forEach(function(s){ s.classList.toggle('through', treat==='through'); });
+    render();
+  });
+
   grid.addEventListener('click', function(e){
     var c=e.target.closest('.card'); if(!c) return;
     grid.querySelectorAll('.card').forEach(function(x){ x.classList.remove('sel'); x.querySelector('.pick').textContent='Select'; });
@@ -392,7 +443,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
 
   function render(){
     if(!tpl){ sum.textContent='Pick a world to get started.'; buy.disabled=true; buy.textContent='Buy now'; return; }
-    sum.innerHTML='<b>'+pack+'</b> pack on <b>'+tplName+'</b> — <b>$'+price+'</b>'+
+    sum.innerHTML='<b>'+pack+'</b> pack on <b>'+tplName+'</b>, mark <b>'+(treat==='through'?'through the world':'on top')+'</b> — <b>$'+price+'</b>'+
       (logoName? '<br><span style="font-size:.84rem;color:var(--dim)">with '+esc(logoName)+'</span>' : '');
     buy.disabled=false;
     buy.textContent = logoURL ? 'Buy now — $'+price : 'Add your logo to continue';
@@ -409,7 +460,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
     // stash the order so thanks.html can restate it and pre-fill the logo email after checkout
     try{
       localStorage.setItem('jd_order', JSON.stringify({
-        pack:pack, price:price, world:tplName, tpl:tpl, logo:logoName
+        pack:pack, price:price, world:tplName, tpl:tpl, logo:logoName, treatment:treat
       }));
     }catch(e){ /* private mode — thanks.html falls back to generic copy */ }
     var link = PAY_LINKS[pack];
@@ -419,6 +470,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
       'I want to order:\n\n'+
       '  Pack:     '+pack+' ($'+price+')\n'+
       '  World:    '+tplName+' (template '+tpl+')\n'+
+      '  Mark:     '+(treat==='through' ? 'THROUGH THE WORLD (knockout — world plays inside the letters)' : 'ON TOP (classic overlay with glow)')+'\n'+
       '  Logo:     '+logoName+'  <-- please attach this file to this email\n\n'+
       'Artist / DJ name:\n'+
       'Show date:\n'+
