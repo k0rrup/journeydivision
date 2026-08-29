@@ -201,7 +201,34 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   A.muted=true; A.setAttribute('muted','');
   function kick(){ A.play().catch(function(){}); }
   kick(); A.addEventListener('loadeddata',kick); A.addEventListener('canplay',kick);
-  function rescue(){ if(front.paused && !reduce){ front.muted=true; front.play().catch(function(){}); } }
+  A.addEventListener('playing',hideStill);
+  armStill();
+  // LOW POWER MODE: iOS refuses autoplay outright and no flag overrides it. We cannot make it play,
+  // but we can stop it looking broken. When play is refused we hide the <video> and show the poster as
+  // a plain background image — a deliberate-looking still, with no dead play triangle on it. The first
+  // tap anywhere then starts the journey and the still steps aside.
+  var still=null;
+  function showStill(){
+    if(still || !ONE) return;
+    still=document.createElement('div');
+    still.style.cssText='position:absolute;inset:0;background:url(hero-poster.jpg) center/cover no-repeat;';
+    A.style.visibility='hidden';
+    front.parentNode.insertBefore(still, front.nextSibling);
+  }
+  function hideStill(){ if(still){ still.remove(); still=null; A.style.visibility=''; } }
+  function armStill(){
+    setTimeout(function(){
+      if(front.paused || front.readyState<2) showStill();
+    }, 2200);
+  }
+  function rescue(){
+    if(!reduce && front.paused){
+      front.muted=true;
+      var p=front.play();
+      if(p&&p.then) p.then(hideStill).catch(function(){});
+      else hideStill();
+    } else if(!front.paused){ hideStill(); }
+  }
   document.addEventListener('touchstart',rescue,{once:false});
   document.addEventListener('click',rescue,{once:false});
   if(!reduce){
