@@ -118,13 +118,13 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
 </head>
 <body>
 <div class="hero-media">
-  <video autoplay muted playsinline loop preload="auto" src="hero-loop.mp4" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
+  <video autoplay muted playsinline loop preload="auto" src="hero-1.mp4" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
   <video muted playsinline loop preload="none" class="hv" id="hvB"></video>
   <div class="scrim"></div>
 </div>
 <script>
 (function(){
-  var SRCS=['hero-loop.mp4','hero-j3.mp4','hero-j8b.mp4'];
+  var SRCS=['hero-1.mp4','hero-2.mp4','hero-3.mp4'];
   var A=document.getElementById('hvA'), B=document.getElementById('hvB');
   var idx=0, front=A, back=B, HOLD=42000, FADE=1300;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
