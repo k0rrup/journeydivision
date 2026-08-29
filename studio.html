@@ -362,10 +362,20 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
   /* glow radius tracks the render: gblur sigma 12 at 2664px wide == 0.45% of width */
   function scale(){
     document.querySelectorAll('.stage').forEach(function(s){
-      var g=s.querySelector('.markglow'); if(g) g.style.filter='blur('+Math.max(2,s.clientWidth*0.0045)+'px)';
+      var g=s.querySelector('.markglow'); if(!g) return;
+      var w=s.clientWidth; if(!w) return;              // no layout yet — a later observer pass gets it
+      g.style.filter='blur('+Math.max(2,w*0.0045)+'px)';
     });
   }
   window.addEventListener('resize', scale);
+  // A background tab reports clientWidth 0, which used to pin the glow at the 2px floor forever --
+  // resize alone never fires when the tab is finally shown. Observe the stages instead so the radius
+  // is set the moment they actually have width, whenever that happens.
+  if(window.ResizeObserver){
+    var ro=new ResizeObserver(scale);
+    document.querySelectorAll('.stage').forEach(function(s){ ro.observe(s); });
+  }
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) scale(); });
 
   /* ---------- selection ---------- */
   grid.addEventListener('click', function(e){
