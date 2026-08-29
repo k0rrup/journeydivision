@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order Received — Journey Division</title>
+<meta name="description" content="Your Journey Division order is in. Send us your logo and your loop lands tonight.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2306070c'/%3E%3Cpath d='M14 32h24M30 22l12 10-12 10' stroke='%237df9ff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a; --ink:#e8ecf4; --dim:#8b93a7;
+  --cyan:#7df9ff; --violet:#9a6bff; --ember:#ff9a4d;
+  --line:rgba(125,249,255,.32); --panel:rgba(10,12,20,.62);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;font-weight:300;line-height:1.6;
+  min-height:100vh;
+  background-image:
+    radial-gradient(1000px 600px at 76% -10%, rgba(154,107,255,.18), transparent 62%),
+    radial-gradient(820px 500px at 6% 2%, rgba(125,249,255,.11), transparent 60%);
+  background-attachment:fixed;
+}
+a{color:var(--cyan)}
+main{max-width:760px;margin:0 auto;padding:0 24px 80px}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:22px 0 40px}
+.brand{font-family:Unbounded,sans-serif;font-weight:800;font-size:.92rem;letter-spacing:.20em;text-transform:uppercase}
+.brand span{color:var(--cyan)}
+.back{font-size:.84rem;color:var(--dim)}
+.tick{
+  width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  border:1.5px solid var(--cyan);color:var(--cyan);font-size:1.5rem;margin-bottom:22px;
+}
+h1{
+  font-family:Unbounded,sans-serif;font-weight:300;
+  font-size:clamp(1.9rem,5vw,3rem);line-height:1.06;letter-spacing:-.02em;margin-bottom:14px;
+}
+h1 b{font-weight:800;color:var(--cyan)}
+.lede{color:var(--dim);max-width:56ch}
+.order{
+  margin:34px 0;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:24px 26px;
+}
+.order-l{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid rgba(125,249,255,.10);font-size:.95rem}
+.row:last-child{border-bottom:none}
+.row span:first-child{color:var(--dim)}
+.row span:last-child{font-weight:400;text-align:right}
+.step{
+  margin:26px 0;border-left:2px solid var(--cyan);padding:2px 0 2px 20px;
+}
+.step h2{font-family:Unbounded,sans-serif;font-weight:500;font-size:1.06rem;margin-bottom:7px}
+.step p{color:var(--dim);font-size:.93rem}
+.cta{
+  display:inline-block;margin-top:18px;
+  font-family:Unbounded,sans-serif;font-weight:800;font-size:.84rem;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--cyan);color:#04121a;border:none;border-radius:999px;
+  padding:15px 30px;cursor:pointer;text-decoration:none;transition:transform .16s,box-shadow .16s;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(125,249,255,.26)}
+.note{
+  margin-top:30px;padding:15px 18px;border-radius:10px;font-size:.88rem;
+  background:rgba(255,154,77,.09);border:1px solid rgba(255,154,77,.30);color:#ffcda3;
+}
+footer{border-top:1px solid rgba(125,249,255,.14);margin-top:50px;padding:26px 0;color:var(--dim);font-size:.82rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <div class="brand">Journey <span>Division</span></div>
+    <a class="back" href="/">journeydivision.com</a>
+  </div>
+
+  <div class="tick">✓</div>
+  <h1>You're in.<br>Now <b>send us your mark</b>.</h1>
+  <p class="lede">Payment received. One thing left — we need the actual logo file to render with.
+  The preview you saw ran in your browser, so the file never reached us.</p>
+
+  <div class="order" id="order" hidden>
+    <div class="order-l">Your order</div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="step">
+    <h2>Send the logo file</h2>
+    <p>Attach your logo to this email and send. PNG or SVG with a transparent background renders best —
+    if all you have is a JPEG or a screenshot, send it anyway and we will cut the background for you.</p>
+    <a class="cta" id="send" href="#">Email my logo</a>
+  </div>
+
+  <div class="step">
+    <h2>Then we render</h2>
+    <p>Your mark goes onto the full-length master at 2664×1080 — the native shape of a club wall — plus a
+    1080p cut for screens. Files land in your inbox tonight.</p>
+  </div>
+
+  <div class="note" id="note">
+    Keep this tab if you can. If your logo is on another device, just email it from there —
+    <a href="mailto:bookings@journeydivision.com">bookings@journeydivision.com</a> — and mention your order.
+  </div>
+
+  <footer>
+    <strong>Journey Division</strong> — immersive visual journeys for stages, clubs and LED walls.<br>
+    Anything at all: <a href="mailto:bookings@journeydivision.com">bookings@journeydivision.com</a>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // The studio page stashes the order before handing off to Stripe, so this page can restate exactly
+  // what was bought and pre-fill the logo email. A DJ paying on their phone and mailing from a laptop
+  // still works -- the fallback copy covers it.
+  var o = null;
+  try { o = JSON.parse(localStorage.getItem('jd_order') || 'null'); } catch(e){ o = null; }
+
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+  var subject, body;
+  if(o && o.pack && o.world){
+    var rows = [
+      ['Pack',  o.pack + (o.price ? ' — $' + o.price : '')],
+      ['World', o.world],
+      ['Logo',  o.logo || 'to be sent']
+    ];
+    document.getElementById('rows').innerHTML = rows.map(function(r){
+      return '<div class="row"><span>'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>';
+    }).join('');
+    document.getElementById('order').hidden = false;
+    subject = 'Logo for my order — ' + o.pack + ' pack, ' + o.world;
+    body = 'My logo is attached.\n\n'+
+           '  Pack:   ' + o.pack + (o.price ? ' ($'+o.price+')' : '') + '\n'+
+           '  World:  ' + o.world + '\n'+
+           '  File:   ' + (o.logo || '(attached)') + '\n\n'+
+           'Artist / DJ name:\n'+
+           'Show date:\n'+
+           'Wall size or resolution (if known):\n\n'+
+           '— sent from journeydivision.com after checkout';
+  } else {
+    subject = 'Logo for my Journey Division order';
+    body = 'My logo is attached.\n\n'+
+           'Artist / DJ name:\n'+
+           'Which pack and world you bought:\n'+
+           'Show date:\n\n'+
+           '— sent from journeydivision.com after checkout';
+  }
+  document.getElementById('send').href =
+    'mailto:bookings@journeydivision.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+})();
+</script>
+</body>
+</html>

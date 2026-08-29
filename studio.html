@@ -396,6 +396,12 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
 
   buy.addEventListener('click', function(){
     if(!tpl || !logoURL) return;
+    // stash the order so thanks.html can restate it and pre-fill the logo email after checkout
+    try{
+      localStorage.setItem('jd_order', JSON.stringify({
+        pack:pack, price:price, world:tplName, tpl:tpl, logo:logoName
+      }));
+    }catch(e){ /* private mode — thanks.html falls back to generic copy */ }
     var link = PAY_LINKS[pack];
     if(link){ window.location.href = link; return; }
     var subject = 'Journey Division order — '+pack+' pack, '+tplName;
