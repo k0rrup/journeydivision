@@ -125,31 +125,56 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
 <body>
 <div class="hero-media">
   <video autoplay muted playsinline loop preload="auto" src="hero-1.mp4" poster="hero-poster.jpg" class="hv on" id="hvA"></video>
-  <video muted playsinline loop preload="none" class="hv" id="hvB"></video>
+  <video muted playsinline loop preload="auto" class="hv" id="hvB"></video>
   <div class="scrim"></div>
 </div>
 <script>
 (function(){
   var SRCS=['hero-1.mp4','hero-2.mp4','hero-3.mp4'];
   var A=document.getElementById('hvA'), B=document.getElementById('hvB');
-  var idx=0, front=A, back=B, HOLD=42000, FADE=1300;
+  var idx=0, front=A, back=B, HOLD=42000, FADE=1300, PRE=12000;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function start(v,src,cb){
-    v.src=src; v.loop=true; v.muted=true; v.load();
-    var done=false;
-    v.addEventListener('canplaythrough',function h(){ if(done)return; done=true;
-      v.removeEventListener('canplaythrough',h); v.play().then(cb).catch(cb); });
-    setTimeout(function(){ if(!done){done=true; v.play().then(cb).catch(cb);} },4000);
+
+  // FREEZE FIX. The old cycler set the incoming src at swap time on an element carrying
+  // preload="none", then played it after a blind 4s timeout whether or not it had buffered — so on a
+  // slow connection the crossfade landed on a video with no data and sat there as a frozen frame.
+  // Worse, the two elements alternate, so the element stuck on preload="none" produced the freeze on
+  // the same clip every lap. Now: buffer the next clip 12s BEFORE the swap, and never fade into a
+  // video that is not ready — if it has not buffered in time, SKIP this lap and keep playing what is
+  // already on screen. A repeated world beats a frozen one.
+  function preloadNext(){
+    var n=(idx+1)%SRCS.length;
+    if(back.getAttribute('data-src')===SRCS[n]) return;
+    back.setAttribute('data-src',SRCS[n]);
+    back.preload='auto'; back.loop=true; back.muted=true;
+    back.src=SRCS[n]; back.load();
   }
+  function buffered(v){ return v.readyState>=3; }   // HAVE_FUTURE_DATA or better
+
+  function swapTo(n){
+    idx=n;
+    var p=back.play();
+    if(p&&p.catch) p.catch(function(){});
+    back.classList.add('on'); front.classList.remove('on');
+    var out=front;
+    setTimeout(function(){ out.pause(); },FADE);
+    var t=front; front=back; back=t;
+    back.removeAttribute('data-src');            // so the next lap re-arms this element
+    setTimeout(preloadNext, Math.max(0,HOLD-PRE));
+    setTimeout(cycle,HOLD);
+  }
+
   function cycle(){
     if(document.hidden){ setTimeout(cycle,HOLD); return; }
-    idx=(idx+1)%SRCS.length;
-    start(back,SRCS[idx],function(){
-      back.classList.add('on'); front.classList.remove('on');
-      setTimeout(function(){ front.pause(); },FADE);
-      var t=front; front=back; back=t;
-      setTimeout(cycle,HOLD);
-    });
+    var n=(idx+1)%SRCS.length;
+    preloadNext();
+    var waited=0;
+    (function waitReady(){
+      if(document.hidden){ setTimeout(cycle,HOLD); return; }
+      if(buffered(back)){ swapTo(n); return; }
+      if(waited>=15000){ setTimeout(cycle,HOLD); return; }  // not ready: hold the current world
+      waited+=250; setTimeout(waitReady,250);
+    })();
   }
   A.muted=true; A.setAttribute('muted','');
   function kick(){ A.play().catch(function(){}); }
@@ -157,7 +182,7 @@ footer{padding:52px 0 64px;color:var(--dim);font-size:.85rem;display:flex;
   function rescue(){ if(front.paused && !reduce){ front.muted=true; front.play().catch(function(){}); } }
   document.addEventListener('touchstart',rescue,{once:false});
   document.addEventListener('click',rescue,{once:false});
-  if(!reduce) setTimeout(cycle,HOLD);
+  if(!reduce){ setTimeout(preloadNext, Math.max(0,HOLD-PRE)); setTimeout(cycle,HOLD); }
   document.addEventListener('visibilitychange',function(){
     if(document.hidden){A.pause();B.pause();}
     else if(!reduce){ front.play().catch(function(){}); }
