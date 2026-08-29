@@ -428,10 +428,27 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
   });
 
   /* iOS refuses programmatic play; declarative autoplay carries it, this is just a nudge */
-  document.querySelectorAll('.stage video').forEach(function(v){
-    var go=function(){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); };
-    v.addEventListener('loadeddata',go); v.addEventListener('canplay',go); go();
+  var vids = [].slice.call(document.querySelectorAll('.stage video'));
+  function play(v){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
+  vids.forEach(function(v){
+    v.addEventListener('loadeddata',function(){ play(v); });
+    v.addEventListener('canplay',function(){ play(v); });
   });
+  // DJs open this on a phone. Three templates autoplaying at once is ~11MB and three concurrent
+  // decodes on mobile data, which reads as a broken page on 4G. Play only what is actually on
+  // screen and pause the rest. Without IntersectionObserver everything just plays, as before.
+  if(window.IntersectionObserver){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var v=e.target;
+        if(e.isIntersecting){ play(v); }
+        else if(!v.paused){ v.pause(); }
+      });
+    }, {threshold:0.25});
+    vids.forEach(function(v){ io.observe(v); });
+  } else {
+    vids.forEach(play);
+  }
 
   scale(); render();
 })();
