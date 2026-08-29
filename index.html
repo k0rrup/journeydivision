@@ -53,23 +53,19 @@ body{
 .hero-media .scrim{
   position:absolute;inset:0;
   background:
-    linear-gradient(90deg, rgba(5,6,10,.88), rgba(5,6,10,.42) 52%, rgba(5,6,10,.18)),
-    linear-gradient(180deg, rgba(5,6,10,.30), transparent 28% 74%, rgba(5,6,10,.52));
+    linear-gradient(90deg, rgba(5,6,10,.80), rgba(5,6,10,.40) 55%, rgba(5,6,10,.20)),
+    linear-gradient(180deg, rgba(5,6,10,.34), rgba(5,6,10,.30) 30% 72%, rgba(5,6,10,.50));
 }
-/* The journey must stay VISIBLE behind the sections — it is the product, not wallpaper. It was being
-   buried three times over: video at 72% brightness, then a scrim darkening to 85% at the bottom, then
-   sections at 58% with a 16px blur. Stacked, the world was gone by the time you scrolled to "What we
-   build". Opened all three up; the blur is what keeps text legible, so it stays — just lighter. */
-section,footer{background:rgba(5,6,10,.62)}
-@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  section,footer{
-    background:rgba(5,6,10,.34);
-    -webkit-backdrop-filter:blur(9px) saturate(1.15);
-    backdrop-filter:blur(9px) saturate(1.15);
-  }
+/* NO PANELS. The journey is the product, so the content sits ON it rather than inside a tinted sheet
+   floating over it. Every section used to be a translucent blurred panel, and inside each panel the
+   cards were bordered boxes — boxes inside a box, and the panel was opaque enough that opening it up
+   changed nothing you could see. Removed both. Legibility now comes from the type itself: a soft
+   shadow, and one gentle full-page scrim behind everything (below), which is cheaper and cleaner than
+   a stack of tinted rectangles. */
+section,footer{background:transparent}
+section h2,section h3,section p,section li,section em,section span,footer{
+  text-shadow:0 2px 18px rgba(3,4,10,.92), 0 0 44px rgba(3,4,10,.7);
 }
-/* legibility insurance now that the ground is livelier — costs nothing when the world behind is dark */
-section h2,section h3,section p,section li,footer{text-shadow:0 1px 14px rgba(3,4,10,.55)}
 /* layout */
 main{max-width:1060px;margin:0 auto;padding:0 24px}
 header{min-height:92vh;display:flex;flex-direction:column;justify-content:center;gap:28px}
@@ -99,19 +95,17 @@ h2{
   font-family:"Unbounded",sans-serif;font-weight:500;font-size:.95rem;
   letter-spacing:.34em;text-transform:uppercase;color:var(--cyan);margin-bottom:44px;
 }
-.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px}
-.card{
-  border:1px solid rgba(232,236,244,.09); border-radius:18px; padding:30px 26px;
-  background:linear-gradient(160deg,rgba(125,249,255,.045),rgba(154,107,255,.035) 60%,transparent);
-}
+/* No card boxes. A hairline on the left marks each column instead — structure without a container. */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:38px 44px}
+.card{border:none;background:none;padding:0 0 0 20px;border-left:1px solid rgba(125,249,255,.30)}
 .card h3{font-family:"Unbounded",sans-serif;font-weight:500;font-size:1.02rem;margin-bottom:12px}
-.card p{color:var(--dim);font-size:.98rem}
-.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;
-  border:1px solid rgba(232,236,244,.09);border-radius:18px;overflow:hidden}
-.law{background:rgba(232,236,244,.03);padding:26px 24px}
+.card p{color:#c3cad8;font-size:.98rem}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:38px 44px;
+  border:none;border-radius:0;overflow:visible}
+.law{background:none;padding:0 0 0 20px;border-left:1px solid rgba(154,107,255,.34)}
 .law em{display:block;font-style:normal;font-family:"Unbounded",sans-serif;font-weight:500;
   font-size:.86rem;margin-bottom:8px;color:var(--ink)}
-.law span{color:var(--dim);font-size:.9rem}
+.law span{color:#c3cad8;font-size:.9rem}
 .contact p{font-size:clamp(1.2rem,3vw,1.7rem);max-width:26em;color:var(--ink)}
 .mail{
   display:inline-block;margin-top:26px;font-family:"Unbounded",sans-serif;font-weight:500;
