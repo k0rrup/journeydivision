@@ -105,7 +105,6 @@ h2{font-family:"Unbounded",sans-serif;font-weight:300;font-size:13px;letter-spac
     <video id="vid" controls playsinline hidden></video>
     <div class="body">
       <div class="state" id="state"></div>
-      <div class="plan" id="plan"></div>
       <a class="dl" id="dl" hidden><button class="ghost">↓ Download this journey</button></a>
     </div>
   </div>
@@ -151,14 +150,11 @@ async function generate(){
   document.getElementById("go").disabled = true;
   document.getElementById("vid").hidden = true;
   document.getElementById("dl").hidden = true;
-  document.getElementById("plan").textContent = "";
   setState('<span class="spin"></span> Building your journey…');
 
   if(!BRAIN_API){
     // Backend not live yet — save the request and show honest status.
     setState('Your brain is warming up. This request is saved; your video appears here the moment the render endpoint is live.');
-    document.getElementById("plan").innerHTML =
-      '<b>saved</b>\n"' + prompt.replace(/</g,"&lt;") + '"';
     saveHistory({prompt, ts:Date.now(), status:"queued"});
     document.getElementById("go").disabled = false;
     return;
@@ -183,8 +179,7 @@ async function poll(job, prompt){
     try{ s = await (await fetch(BRAIN_API+"/job/"+job,
       {headers:{"Authorization":"Bearer "+TOKEN}})).json(); }
     catch(e){ continue; }
-    if(s.plan) document.getElementById("plan").innerHTML = "<b>the journey your words built</b>\n"+s.plan;
-    if(s.status==="rendering") setState('<span class="spin"></span> Rendering scene '+(s.scene||"")+'…');
+    if(s.status==="rendering") setState('<span class="spin"></span> Rendering your journey…');
     if(s.status==="done" && s.video){
       const v=document.getElementById("vid"); v.src=s.video; v.hidden=false;
       setState("Done. Here's your journey.");
