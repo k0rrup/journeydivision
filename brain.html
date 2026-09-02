@@ -96,6 +96,22 @@ h2{font-family:"Unbounded",sans-serif;font-weight:300;font-size:13px;letter-spac
     and renders a video you can download, right here.</div>
 
   <textarea id="prompt" placeholder="e.g. — a slow descent through a glowing mushroom forest, drifting past new mushrooms, a beetle on a stem, teal light, never ending"></textarea>
+  <!-- WHAT THE BRAIN ACTUALLY KNOWS. Added 9/2 after a cactus prompt came back as a RACECAR: when a
+       word isn't trained, the base model fills the gap with whatever it likes, silently. Saying what
+       is trained is the honest fix - it costs a line of text and saves a confusing render. Keep this
+       list in step with nk:JD MODELS - our own LoRAs/sdxl-adapters/ as brains land. -->
+  <div class="knows" id="knows">
+    <span class="klabel">Your brain knows</span>
+    <span class="k">mushrooms &amp; fungi</span><span class="k">deep sea</span><span class="k">insects</span>
+    <span class="k">dragonflies</span><span class="k">shells</span><span class="k">nudibranchs</span>
+    <span class="k">slime moulds</span><span class="k">microscopic</span><span class="k">forest</span>
+    <span class="k">glow &amp; light</span><span class="k">cosmos</span>
+    <span class="k new">martian ground <em>new</em></span>
+    <span class="k soon">cactus · trees · stars · arthropods <em>training</em></span>
+    <div class="knote">Ask for something outside this and the brain fills the gap with its own
+      guesswork — that is where a stray car in a marsh comes from. Words like <b>gliding</b> or
+      <b>driving</b> can summon vehicles; say <b>drifting forward</b> or <b>slow push</b> instead.</div>
+  </div>
   <div class="row">
     <button id="go" onclick="generate()">Build my journey →</button>
     <span class="hint" id="hint">Takes a little while — the brain renders it scene by scene.</span>
@@ -115,6 +131,17 @@ h2{font-family:"Unbounded",sans-serif;font-weight:300;font-size:13px;letter-spac
   <div class="foot">Nothing you make here reaches the public site. Journeys stay in this private studio.</div>
 </div>
 
+<style>
+.knows{margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.klabel{font-size:11px;letter-spacing:.09em;text-transform:uppercase;opacity:.55;margin-right:4px}
+.knows .k{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid currentColor;
+  opacity:.62}
+.knows .k.new{opacity:1;font-weight:600}
+.knows .k.new em,.knows .k.soon em{font-style:normal;font-size:10px;opacity:.7;margin-left:5px;
+  letter-spacing:.05em;text-transform:uppercase}
+.knows .k.soon{opacity:.42;border-style:dashed}
+.knote{flex-basis:100%;font-size:12px;opacity:.6;margin-top:6px;line-height:1.5;max-width:62ch}
+</style>
 <script>
 // ---- config: the brain's generation API. Empty until the endpoint is live; set by the fleet. ----
 const BRAIN_API = "";              // e.g. "https://api.journeydivision.com/brain"
