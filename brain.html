@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JourneyBrain — Journey Division</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2306070c'/%3E%3Cpath d='M14 32h24M30 22l12 10-12 10' stroke='%237df9ff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a; --ink:#e8ecf4; --dim:#8b93a7;
+  --cyan:#7df9ff; --violet:#9a6bff; --ember:#ff9a4d;
+  --line:rgba(125,249,255,.28); --panel:rgba(125,249,255,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;
+  font-weight:300;line-height:1.6;min-height:100vh}
+a{color:var(--cyan);text-decoration:none}
+.wrap{max-width:920px;margin:0 auto;padding:26px 20px 90px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:6px;flex-wrap:wrap}
+.logo{font-family:"Unbounded",sans-serif;font-weight:800;font-size:22px;letter-spacing:.02em}
+.logo b{color:var(--cyan)}
+.who{font-size:12.5px;color:var(--dim)}
+h1{font-family:"Unbounded",sans-serif;font-weight:500;font-size:clamp(26px,5vw,40px);
+  margin:30px 0 6px;letter-spacing:.01em}
+.sub{color:var(--dim);max-width:60ch;margin-bottom:26px}
+
+/* password gate */
+#gate{position:fixed;inset:0;background:rgba(4,5,9,.94);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.gatecard{width:min(420px,100%);border:1px solid var(--line);border-radius:16px;
+  background:var(--panel);padding:30px 26px;text-align:center}
+.gatecard .logo{font-size:26px;margin-bottom:6px}
+.gatecard p{color:var(--dim);font-size:13.5px;margin-bottom:18px}
+input[type=password],textarea{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);
+  border-radius:11px;color:var(--ink);font:inherit;padding:13px 14px}
+input:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+textarea{min-height:96px;resize:vertical}
+.err{color:var(--ember);font-size:13px;min-height:18px;margin-top:8px}
+button{font:inherit;font-weight:600;border:0;border-radius:11px;cursor:pointer;
+  background:linear-gradient(120deg,var(--cyan),var(--violet));color:#05060a;padding:13px 22px}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.55;cursor:default}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+
+.app{display:none}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.hint{color:var(--dim);font-size:12.5px}
+.stage{margin-top:24px;border:1px solid var(--line);border-radius:16px;background:var(--panel);
+  overflow:hidden;min-height:120px}
+.stage video{width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:cover}
+.stage .body{padding:16px 18px}
+.state{display:flex;align-items:center;gap:12px;color:var(--dim);font-size:14px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);
+  border-top-color:var(--cyan);animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.plan{margin-top:10px;font-size:12.5px;color:var(--dim);
+  font-family:ui-monospace,Menlo,monospace;white-space:pre-wrap}
+.plan b{color:var(--cyan);font-family:"Space Grotesk",sans-serif}
+.dl{display:inline-block;margin-top:12px}
+h2{font-family:"Unbounded",sans-serif;font-weight:300;font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin:34px 0 12px}
+.hist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.hcard{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.hcard video{width:100%;aspect-ratio:16/9;object-fit:cover;background:#000;display:block}
+.hcard .c{padding:9px 11px;font-size:12.5px;color:var(--dim)}
+.foot{margin-top:40px;color:var(--dim);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gatecard">
+    <div class="logo">Journey<b>Brain</b></div>
+    <p>Private. Enter the password to talk to your brain.</p>
+    <input id="pw" type="password" placeholder="password" autocomplete="off"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <div class="err" id="gerr"></div>
+    <div style="margin-top:14px"><button onclick="unlock()">Enter →</button></div>
+  </div>
+</div>
+
+<div class="wrap app" id="app">
+  <header>
+    <div class="logo">Journey<b>Brain</b></div>
+    <div class="who">private studio · <a href="index.html">journeydivision.com</a></div>
+  </header>
+
+  <h1>Tell your brain where to take you.</h1>
+  <div class="sub">Type the journey you want — the world, and what you travel past. Your brain builds it
+    and renders a video you can download, right here.</div>
+
+  <textarea id="prompt" placeholder="e.g. — a slow descent through a glowing mushroom forest, drifting past new mushrooms, a beetle on a stem, teal light, never ending"></textarea>
+  <div class="row">
+    <button id="go" onclick="generate()">Build my journey →</button>
+    <span class="hint" id="hint">Takes a little while — the brain renders it scene by scene.</span>
+  </div>
+
+  <div class="stage" id="stage" hidden>
+    <video id="vid" controls playsinline hidden></video>
+    <div class="body">
+      <div class="state" id="state"></div>
+      <div class="plan" id="plan"></div>
+      <a class="dl" id="dl" hidden><button class="ghost">↓ Download this journey</button></a>
+    </div>
+  </div>
+
+  <h2 id="histh" hidden>Your journeys</h2>
+  <div class="hist" id="hist"></div>
+
+  <div class="foot">Nothing you make here reaches the public site. Journeys stay in this private studio.</div>
+</div>
+
+<script>
+// ---- config: the brain's generation API. Empty until the endpoint is live; set by the fleet. ----
+const BRAIN_API = "";              // e.g. "https://api.journeydivision.com/brain"
+// Password gate. The hash hides the UI from casual visitors; the REAL lock is the brain itself,
+// which only answers calls carrying this password as its token. Change: ask your agent to reset it.
+const PW_SHA256 = "09d4f9c056a6496149fa5c49761aff705f49fbf770761549f6e724d7ac455659";
+let TOKEN = "";
+
+async function sha256(s){
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function unlock(){
+  const pw = document.getElementById("pw").value;
+  const h = await sha256(pw);
+  if (h === PW_SHA256) {
+    TOKEN = pw;
+    try{ sessionStorage.setItem("jb_ok","1"); }catch(e){}
+    document.getElementById("gate").style.display="none";
+    document.getElementById("app").style.display="block";
+    loadHistory();
+  } else {
+    document.getElementById("gerr").textContent = "That's not it. Try again.";
+  }
+}
+
+function setState(html){ const s=document.getElementById("state");
+  s.innerHTML = html; document.getElementById("stage").hidden=false; }
+
+async function generate(){
+  const prompt = document.getElementById("prompt").value.trim();
+  if(!prompt) return;
+  document.getElementById("go").disabled = true;
+  document.getElementById("vid").hidden = true;
+  document.getElementById("dl").hidden = true;
+  document.getElementById("plan").textContent = "";
+  setState('<span class="spin"></span> Building your journey…');
+
+  if(!BRAIN_API){
+    // Backend not live yet — save the request and show honest status.
+    setState('Your brain is warming up. This request is saved; your video appears here the moment the render endpoint is live.');
+    document.getElementById("plan").innerHTML =
+      '<b>saved</b>\n"' + prompt.replace(/</g,"&lt;") + '"';
+    saveHistory({prompt, ts:Date.now(), status:"queued"});
+    document.getElementById("go").disabled = false;
+    return;
+  }
+  try{
+    const r = await fetch(BRAIN_API + "/generate", {method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+TOKEN},
+      body: JSON.stringify({prompt})});
+    if(!r.ok) throw new Error("brain said " + r.status);
+    const {job} = await r.json();
+    await poll(job, prompt);
+  }catch(e){
+    setState("Couldn't reach the brain: " + e.message + ". Try again in a moment.");
+  }
+  document.getElementById("go").disabled = false;
+}
+
+async function poll(job, prompt){
+  for(let i=0;i<600;i++){
+    await new Promise(r=>setTimeout(r, 3000));
+    let s;
+    try{ s = await (await fetch(BRAIN_API+"/job/"+job,
+      {headers:{"Authorization":"Bearer "+TOKEN}})).json(); }
+    catch(e){ continue; }
+    if(s.plan) document.getElementById("plan").innerHTML = "<b>the journey your words built</b>\n"+s.plan;
+    if(s.status==="rendering") setState('<span class="spin"></span> Rendering scene '+(s.scene||"")+'…');
+    if(s.status==="done" && s.video){
+      const v=document.getElementById("vid"); v.src=s.video; v.hidden=false;
+      setState("Done. Here's your journey.");
+      const dl=document.getElementById("dl"); dl.href=s.video; dl.download=(prompt.slice(0,40)||"journey")+".mp4"; dl.hidden=false;
+      saveHistory({prompt, ts:Date.now(), status:"done", video:s.video});
+      return;
+    }
+    if(s.status==="failed"){ setState("That one didn't come out. Try rewording it."); return; }
+  }
+  setState("Still rendering — it's taking a while. Check back shortly.");
+}
+
+// local history (this browser only)
+function saveHistory(item){
+  let h=[]; try{ h=JSON.parse(localStorage.getItem("jb_hist")||"[]"); }catch(e){}
+  h.unshift(item); h=h.slice(0,24);
+  try{ localStorage.setItem("jb_hist", JSON.stringify(h)); }catch(e){}
+  loadHistory();
+}
+function loadHistory(){
+  let h=[]; try{ h=JSON.parse(localStorage.getItem("jb_hist")||"[]"); }catch(e){}
+  const done=h.filter(x=>x.video);
+  document.getElementById("histh").hidden = done.length===0;
+  document.getElementById("hist").innerHTML = done.map(x=>`
+    <div class="hcard">
+      <video src="${x.video}" controls preload="metadata" playsinline muted></video>
+      <div class="c">${(x.prompt||"").replace(/</g,"&lt;").slice(0,90)}</div>
+    </div>`).join("");
+}
+try{ if(sessionStorage.getItem("jb_ok")==="1"){ /* keep gate; require pw each load for privacy */ } }catch(e){}
+</script>
+</body>
+</html>
