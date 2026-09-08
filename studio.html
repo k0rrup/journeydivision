@@ -350,6 +350,20 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
       sum=document.getElementById('sum'), buy=document.getElementById('buy'), fine=document.getElementById('fine');
   var logoURL=null, logoName='', tpl=null, tplName='', pack='Set', price=399, treat='overlay';
 
+  /* ---------- the demo mark ----------
+     Mason, 2026-09-08: "my noyzekomplaynt logo should be on the logos as a demo when people view
+     the site." Without this the stages render bare worlds -- a visitor cannot tell what the
+     product IS until they upload something, which is backwards. NK rides every stage on arrival
+     and is replaced the moment they drop their own file in. HARD LAW 10: only our own marks here. */
+  var DEMO_MARK='demo-mark.png';
+  function showMark(url){
+    document.querySelectorAll('.mark,.markglow').forEach(function(img){ img.src=url; });
+    document.querySelectorAll('.stage').forEach(function(st){
+      st.classList.add('on');
+      st.style.setProperty('--mk','url("'+url+'")');
+    });
+  }
+
   /* ---------- logo intake ---------- */
   function setLogo(f){
     if(!f) return;
@@ -379,7 +393,7 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
   function clearLogo(){
     if(logoURL) URL.revokeObjectURL(logoURL);
     logoURL=null; logoName=''; chipwrap.innerHTML=''; drop.classList.remove('has');
-    document.querySelectorAll('.stage').forEach(function(s){ s.classList.remove('on'); });
+    showMark(DEMO_MARK);
     warn.classList.add('hide'); file.value=''; render();
   }
   function flag(m){ warn.textContent=m; warn.classList.remove('hide'); }
@@ -478,6 +492,8 @@ footer{border-top:1px solid rgba(125,249,255,.14);margin-top:60px;padding:30px 0
       '— sent from journeydivision.com/studio';
     window.location.href='mailto:bookings@journeydivision.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   });
+
+  showMark(DEMO_MARK);
 
   /* iOS refuses programmatic play; declarative autoplay carries it, this is just a nudge */
   var vids = [].slice.call(document.querySelectorAll('.stage video'));
