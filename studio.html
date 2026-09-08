@@ -117,9 +117,25 @@ h1 b{font-weight:800;color:var(--cyan)}
   max-height:34%;max-width:70%;width:auto;height:auto;
   pointer-events:none;opacity:0;transition:opacity .3s;
 }
-.markglow{opacity:0;filter:blur(6px)}
-.stage.on .mark{opacity:1}
-.stage.on .markglow{opacity:.55}
+/* The second layer used to be a bright GLOW, which is the wrong instrument: it adds light to a
+   frame that already has too much. Blackened and blurred, the same element becomes the dark plate
+   the renderer puts under the mark -- a soft shadow shaped like the letters. Same image, same
+   fit-box, no extra request. */
+.markglow{opacity:0;filter:blur(13px) brightness(0) saturate(0)}
+/* A GLOW ALONE CANNOT HOLD A MARK ON A BRIGHT WORLD -- it adds light to a frame that already has
+   too much. Measured on the live page 9/8: mark-to-bed contrast was 1.48 / 1.20 / 1.27 on the
+   three stages, all under the 1.55 floor, so the wordmark washed into the neon behind it. The
+   renderer solves this with a dark blurred plate UNDER the mark; this is that plate in CSS.
+   Stacked drop-shadows because one is not opaque enough on a busy bed. */
+.stage.on .mark{
+  opacity:1;
+  filter:
+    drop-shadow(0 0 2px rgba(0,0,0,.95))
+    drop-shadow(0 0 7px rgba(0,0,0,.85))
+    drop-shadow(0 0 18px rgba(0,0,0,.72))
+    drop-shadow(0 1px 3px rgba(0,0,0,.9));
+}
+.stage.on .markglow{opacity:.92}
 /* THROUGH-THE-WORLD treatment. Measured off a real rig in the founder's show footage: the mark does
    not move, the CONTENT moves through it. A dark scrim covers the stage with the mark KNOCKED OUT of
    it, so the world plays at full strength inside the letterforms and dimmed outside — one video
